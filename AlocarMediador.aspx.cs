@@ -32,7 +32,7 @@ public partial class AlocarMediador : System.Web.UI.Page
             {
                 Response.Write("<script type=text/javascript>alert('Por favor, informe a data do evento ') </script>");
             }
-            else if(TextBoxHoraFim.Text .Trim().Length ==0)
+            else if(TextBoxHoraFim.Text .Trim().Length == 0)
             {
                 Response.Write("<script type=text/javascript>alert('Por favor, verifique as horas do evento ') </script>");
             }
@@ -45,12 +45,13 @@ public partial class AlocarMediador : System.Web.UI.Page
                 EquilibrioClasse _agenda = new EquilibrioClasse();
                 _agenda.InserirAgendamentoAdm(Convert.ToInt16(GridViewContratos.SelectedDataKey["ID_SOLICITACAO"])
                                             , 0, Convert.ToDateTime(TextBoxAgenda.Text), 1,FreeTextBoxConvocacao .Text
-                                            , Convert.ToInt32(DropDownListColaborador.SelectedValue), DateTime.Now, 2
-                                            , TextBoxHoraInicio.Text, TextBoxHoraFim.Text,TextBoxEmailConvidado.Text,TextBoxlinkvideo.Text);
+                                            , Convert.ToInt32(DropDownListColaborador.SelectedValue), DateTime.Now, 0
+                                            , TextBoxHoraInicio.Text, TextBoxHoraFim.Text, TextBoxEmailConvidado.Text,TextBoxlinkvideo.Text);
 
                 GridViewContratos.DataBind();
                 
-                Response.Write("<script type=text/javascript>alert('Registro processado! ') </script>");
+                Response.Write("<script type=text/javascript> alert('Registro processado!') </script>");
+                Limpa_tela();
             }
         }
         catch (Exception ex)
@@ -72,24 +73,22 @@ public partial class AlocarMediador : System.Web.UI.Page
         TextBoxHoraInicio.Enabled = false ;
         TextBoxDemandado.Text = string.Empty;
         CheckBoxEmail.Checked = false;
+        FreeTextBoxConvocacao.Text = String.Empty;
         //TextBoxEmailConvidado.Enabled = false ;
-        
-
-
     }
-    void EnviarEmail()
+    void EnviarEmail(string p_email)
     {
         try
         {
             MailMessage _email = new MailMessage();
-                _email.From = new MailAddress("volitsistemas@volitsistemas.com.br", "Sistema MOL - Equilibrio", System.Text.Encoding.UTF8);
-                _email.To.Add(new MailAddress("zmargutti@gmail.com"));
+                _email.From = new MailAddress("danilo.augusto@volit.com.br", "Sistema MOL - Equilibrio", System.Text.Encoding.UTF8);
+                _email.To.Add(new MailAddress(p_email));
                 _email.To.Add(new MailAddress("zuleica.margutti.mediacaoonline@equilibrio.volitsistemas.com.br"));
                 _email.Subject = "Carta convite - Equilibrio Camara de Mediação " ;
                 _email.Body = "Prezado Sr, você foi convidado a participar de uma reunião conosco. Segue anexo carta de convite ";
                 _email.Body += FreeTextBoxConvocacao.Text;
                 _email.IsBodyHtml = true;
-                _email.Priority = MailPriority.Normal;
+                _email.Priority = MailPriority.High;
 
             //// faz o attach do word
             
@@ -106,10 +105,10 @@ public partial class AlocarMediador : System.Web.UI.Page
             SmtpClient smtp = new SmtpClient();
 
             smtp.EnableSsl = false;
-            smtp.Credentials = new System.Net.NetworkCredential("volitsistemas@volitsistemas.com.br","loggicca2017" );
+            smtp.Credentials = new System.Net.NetworkCredential("danilo.augusto@volit.com.br", "Dan@868298");
             //smtp.Credentials = new System.Net.NetworkCredential(_email_envio.Tables[0].Rows[0]["EMAIL_ORIGEM"].ToString(), _email_envio.Tables[0].Rows[0]["SENHA_SMTP"].ToString());
             //smtp.UseDefaultCredentials = true;
-            smtp.Host = "smtp.volitsistemas.com.br";//GridViewConfigEmail.SelectedDataKey["SMTP"].ToString();
+            smtp.Host = "smtp.kinghost.net";//GridViewConfigEmail.SelectedDataKey["SMTP"].ToString();
             smtp.Port = 587 ; //Convert.ToInt16(GridViewConfigEmail.SelectedDataKey["PORTA_SMTP"].ToString());
 
             smtp.Send(_email);
@@ -153,23 +152,22 @@ public partial class AlocarMediador : System.Web.UI.Page
             DropDownListModalidade.Enabled = true;
             if (DropDownListOrigem.SelectedIndex == 1)   // se for contrato de cliente, faz pesquisa usando os dados escolhidos
             {
-                ObjectDataSourceHIST.SelectMethod = "ObterSolicitacao";
+                ObjectDataSourceHIST.SelectMethod = "ObterClientes";
                 ObjectDataSourceHIST.SelectParameters.Clear();
-                ObjectDataSourceHIST.SelectParameters.Add("id_cliente",System.Data.DbType.Int16,DropDownListCliente.SelectedValue.ToString ());
-                ObjectDataSourceHIST.SelectParameters.Add("servico",System.Data.DbType.String,DropDownListServico.SelectedItem.ToString());
+                //ObjectDataSourceHIST.SelectParameters.Add("id_cliente",System.Data.DbType.Int16,DropDownListCliente.SelectedValue.ToString ());
+                //ObjectDataSourceHIST.SelectParameters.Add("servico",System.Data.DbType.String,DropDownListServico.SelectedItem.ToString());
                 ObjectDataSourceHIST.DataBind();
                 GridViewContratos.DataBind();
             }
             else   // faz pesquisa vindo do site
             {
-                ObjectDataSourceHIST.SelectMethod = "ObterConflitos";
+                ObjectDataSourceHIST.SelectMethod = "ObterSolicitacao_Cliente";
                 ObjectDataSourceHIST.SelectParameters.Clear();
                 ObjectDataSourceHIST.DataBind();
-                GridViewContratos.DataBind();
             
             }
-            // prepara lista dos documentos
 
+            // prepara lista dos documentos
             ObjDSDocumento.SelectParameters[0].DefaultValue = DropDownListServico.SelectedItem.ToString ().Trim();
             ObjDSDocumento.DataBind();
 
@@ -236,10 +234,10 @@ public partial class AlocarMediador : System.Web.UI.Page
     {
         if (TextBoxDemandado.Text.Trim().Length > 0)
         {
-            ObjectDataSourceHIST.SelectMethod = "ObterConflitos";
+            ObjectDataSourceHIST.SelectMethod = "ObterPesquisaSolicitacao";
             ObjectDataSourceHIST.SelectParameters.Clear();
-            ObjectDataSourceHIST.SelectParameters.Add("demandado", System.Data.DbType.String, TextBoxDemandado.Text.Trim());
-            ObjectDataSourceHIST.SelectParameters.Add("id_cliente", System.Data.DbType.Int16, DropDownListCliente.SelectedValue.ToString());
+            ObjectDataSourceHIST.SelectParameters.Add("p_solicitado", System.Data.DbType.String, TextBoxDemandado.Text.Trim());
+            //ObjectDataSourceHIST.SelectParameters.Add("id_cliente", System.Data.DbType.Int16, DropDownListCliente.SelectedValue.ToString());
             ObjectDataSourceHIST.DataBind();
             GridViewContratos.DataBind();
         }
@@ -268,7 +266,7 @@ public partial class AlocarMediador : System.Web.UI.Page
     {
         if (CheckBoxEmail.Checked)
         {
-            EnviarEmail();
+            EnviarEmail(TextBoxEmailConvidado.Text);
         }
         
     }

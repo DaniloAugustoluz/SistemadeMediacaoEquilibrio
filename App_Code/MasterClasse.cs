@@ -108,19 +108,19 @@ public class MasterClasse
     
     }
 
-    public int Id_Solicitado(string P_EMAIL)
+    public int Id_Solicitado(string P_CPFCNPJ)
     {
         try
         {
             MySqlConnection _conn = new MySqlConnection(ConfigurationManager.ConnectionStrings["Mediacao"].ToString());
             _conn.Open();
 
-            string s_comando = "SELECT ID_SOLICITADO FROM TB_SOLICITADO WHERE EMAIL_SOLICITADO = '" + P_EMAIL.ToString().Trim() + "';";
+            string s_comando = "SELECT ID_SOLICITADO FROM TB_SOLICITADO WHERE CPFCNPJ = '" + P_CPFCNPJ.ToString().Trim() + "';";
 
             MySqlCommand _comando = new MySqlCommand(s_comando, _conn);
             _comando.CommandType = CommandType.Text;
             _comando.CommandText = s_comando.ToString();
-            int _retorno = (Convert.ToInt32(_comando.ExecuteScalar().ToString()));
+            int _retorno = (Convert.ToInt32(_comando.ExecuteScalar()));
 
             return _retorno;
         }
@@ -130,7 +130,8 @@ public class MasterClasse
         }
 
     }
-    public void InserirSolicitacao(int P_ESCOLHERMEDIADOR, string  P_MODALIDADE, int P_ID_SOLICITANTE, int P_ID_SOLICITADO)
+    public void InserirSolicitacao(string  P_MODALIDADE, string P_DESCRICAO_SOLICITACAO, int P_ID_SOLICITANTE, string P_NOME_SOLICITANTE, int P_ID_SOLICITADO, string P_NOME_SOLICITADO, int P_TIPO_HISTORICO, int P_IDMEDIADOR)
+
     {
         try
         {
@@ -138,11 +139,16 @@ public class MasterClasse
             StringBuilder _comando = new StringBuilder();
             _conn.Open();
 
-            _comando.Append(" INSERT INTO TB_SOLICITACAO (ESCOLHERMEDIADOR, MODALIDADE, IDSOLICITANTE, IDSOLICITADO) VALUES(");
-            _comando.Append("'" + P_ESCOLHERMEDIADOR.ToString().Trim() + "',");
+            _comando.Append(" INSERT INTO TB_SOLICITACAO (MODALIDADE, DESCRICAO_SOLICITACAO, ULTIMO_HISTORICO, IDSOLICITANTE, NOME_SOLICITANTE, IDSOLICITADO, NOME_SOLICITADO, TIPO_HISTORICO, IDMEDIADOR) VALUES(");
             _comando.Append("'" + P_MODALIDADE.ToString().Trim() + "',");
+            _comando.Append("'" + P_DESCRICAO_SOLICITACAO.ToString().Trim() + "',");
+            _comando.Append("'" + P_TIPO_HISTORICO.ToString().Trim() + "',"); //ESTE PARÂMETRO INSERE O TIPO DE HISTORICO COMO ULTIMO HISTÓRICO, POR SER O INICIO DA SOLICITAÇÃO O TIPO É = 1
             _comando.Append("'" + P_ID_SOLICITANTE.ToString().Trim() + "',");
-            _comando.Append("'" + P_ID_SOLICITADO.ToString().Trim() + "');");
+            _comando.Append("'" + P_NOME_SOLICITANTE.ToString().Trim() + "',");
+            _comando.Append("'" + P_ID_SOLICITADO.ToString().Trim() + "',");
+            _comando.Append("'" + P_NOME_SOLICITADO.ToString().Trim() + "',");
+            _comando.Append("'" + P_TIPO_HISTORICO.ToString().Trim() + "',");
+            _comando.Append("(SELECT ID_MEDIADOR FROM TB_MEDIADOR WHERE ID_MEDIADOR = " + P_IDMEDIADOR.ToString() + "));");
 
             MySqlCommand _comm = new MySqlCommand();
             _comm.Connection = _conn;

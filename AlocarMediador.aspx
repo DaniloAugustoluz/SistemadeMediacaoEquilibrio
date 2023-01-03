@@ -47,7 +47,7 @@
         </tr>
         <tr>
             <td class="style3">
-                Cliente</td>
+                Cliente Solicitante</td>
             <td class="style2" colspan="2">
                 <asp:DropDownList ID="DropDownListCliente" runat="server" Enabled="False" 
                     Width="90%" AutoPostBack="True" DataSourceID="ObjDSClient" 
@@ -106,9 +106,9 @@
                 </td>
         </tr>
         <tr>
-            <td class="style3">
+            <td class="style4">
                 Hora</td>
-            <td class="style2">
+            <td class="style5">
                 <asp:TextBox ID="TextBoxHoraInicio" runat="server" Enabled="False"></asp:TextBox>
                 <ajaxToolkit:MaskedEditExtender ID="TextBoxHoraInicio_MaskedEditExtender" 
                     runat="server" AutoComplete="False" 
@@ -119,7 +119,7 @@
                     MaskType="Time" TargetControlID="TextBoxHoraInicio" 
                     UserTimeFormat="TwentyFourHour" />
             </td>
-            <td>
+            <td class="style6">
                 <asp:TextBox ID="TextBoxHoraFim" runat="server" Enabled="False"></asp:TextBox>
                 <ajaxToolkit:MaskedEditExtender ID="TextBoxHoraFim_MaskedEditExtender" 
                     runat="server" AutoComplete="False" 
@@ -140,9 +140,9 @@
             </td>
         </tr>
                  <tr>
-                     <td class="style3">
+                     <td class="style4">
                          Link da audiência</td>
-                     <td class="style2" colspan="2">
+                     <td class="style5" colspan="2">
                          <asp:TextBox ID="TextBoxlinkvideo" runat="server" Enabled="False" 
                              MaxLength="100" Width="100%"></asp:TextBox>
                      </td>
@@ -221,22 +221,22 @@
                           AllowSorting="True" 
                         
                     
-                    DataKeyNames="ID_SOLICITACAO,NOME_SOLICITANTE,EMAIL_SOLICITANTE,CIDADE,DESCRICAO,NOME_SOLICITADO,CPFCNPJ,EMAIL_SOLICITADO" 
+                    DataKeyNames="SOLICITACAO,NOME_SOLICITANTE,EMAIL_SOLICITANTE,CIDADE,DESCRICAO,NOME_SOLICITADO,CPFCNPJ,EMAIL_SOLICITADO" 
                     style="font-family: Arial, Helvetica, sans-serif; font-size: 8pt" 
                          Enabled="False" PageSize="3" 
                          onselectedindexchanged="GridViewContratos_SelectedIndexChanged">
                     <AlternatingRowStyle BackColor="#F7F7F7" />
                     <Columns>
                         <asp:CommandField ShowSelectButton="True" />
-                        <asp:BoundField DataField="ID_SOLICITACAO" HeaderText="Num. Proc." />
+                        <asp:BoundField DataField="SOLICITACAO" HeaderText="Solicitação" />
                         <asp:BoundField DataField="NOME_SOLICITANTE" HeaderText="Solicitante" 
-                            SortExpression="DEMANDANTE" />
+                            SortExpression="Solicitante" />
                         <asp:BoundField DataField="EMAIL_SOLICITANTE" HeaderText="E Mail" 
                             SortExpression="EMAIL_REQUERENTE" />
                         <asp:BoundField DataField="CIDADE" HeaderText="Cidade" />
                         <asp:BoundField DataField="DESCRICAO" HeaderText="Resumo" />
                         <asp:BoundField DataField="NOME_SOLICITADO" HeaderText="Solicitado" 
-                            SortExpression="DEMANDADO" />
+                            SortExpression="NOME_SOLICITADO" />
                         <asp:BoundField DataField="CPFCNPJ" HeaderText="CPF_CNPJ" />
                         <asp:BoundField DataField="EMAIL_SOLICITADO" HeaderText="E mail" 
                             SortExpression="EMAIL_REQUERIDO" />

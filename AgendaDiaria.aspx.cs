@@ -10,10 +10,18 @@ public partial class AgendaDiaria : System.Web.UI.Page
     int id_mediador = 0;
     protected void Page_Load(object sender, EventArgs e)
     {
+
+        //Email do usuário para localizar o mediador e preencher o dropdown.
+        Session["nomeUsuario"] = Session["nome_usuario"];
+        EquilibrioClasse _classe = new EquilibrioClasse();
+        string mediador = Convert.ToString(_classe.CarregarMediador(Session["nomeUsuario"].ToString()));
+
+        DropDownListMediador.DataValueField = mediador;
+
         //id_mediador = Convert.ToInt16 (Request.QueryString["Media"]);
 
-        ObjectDSAgenda.SelectMethod = "ObterAgendaDiaria";
-        ObjectDSAgenda.SelectParameters[0].DefaultValue = id_mediador.ToString ();
+        ObjectDSAgenda.SelectMethod = "ObterAgendaMediador";
+        ObjectDSAgenda.SelectParameters[0].DefaultValue = Session["nomeUsuario"].ToString();
         ObjectDSAgenda.SelectParameters[1].DefaultValue = "0";
         ObjectDSAgenda.DataBind();
     }
@@ -125,7 +133,7 @@ public partial class AgendaDiaria : System.Web.UI.Page
         FreeTextBoxAgenda.EnableToolbars = false;
         FreeTextBoxAgenda.ReadOnly = true;
 
-//   busca os documentos
+        //Busca os documentos
         EquilibrioClasse _objDocumento = new EquilibrioClasse();
         ObjectDSDocumento.SelectParameters[0].DefaultValue = _objDocumento.ObterUsoDocumento(Convert.ToInt32(GridViewAgenda1.SelectedDataKey["ID_CONFLITO"].ToString()));
         ObjectDSDocumento.DataBind();
@@ -164,6 +172,12 @@ public partial class AgendaDiaria : System.Web.UI.Page
     }
     protected void DropDownListMediador_SelectedIndexChanged(object sender, EventArgs e)
     {
-        id_mediador = Convert.ToInt16 (DropDownListMediador.SelectedValue);
+        id_mediador = Convert.ToInt16(DropDownListMediador.SelectedValue);
+       
+        string emailUsuario = Session["nome_usuario"].ToString();
+        EquilibrioClasse _classe = new EquilibrioClasse();
+        string usuario = _classe.ObterUsuario(emailUsuario).ToString();
+
+        DropDownListDocAgenda.DataValueField = usuario;
     }
 }
