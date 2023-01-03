@@ -1,5 +1,9 @@
-﻿using System;
+﻿using Microsoft.Ajax.Utilities;
+using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Web;
@@ -14,38 +18,21 @@ public partial class _Default : System.Web.UI.Page
         Session["VerificacaoCheckBox"] = Session["CheckBoxArquivos"];
         TextBoxName.Focus();
     }
-    public int retornaChecarEscolherMed(int checkBoxSim, int checkBoxNao)
-    {
-        int checkSim = checkBoxSim;
-        int checkNao = checkBoxNao;
-       
-        if (checkSim.Equals(1))
-        {
-            CheckBoxNao.Checked = false;
-            return checkBoxSim;
-
-        }
-        else
-        {
-            CheckBoxNao.Checked = true; 
-            return checkBoxNao;
-        }
+    
         
-        
-    }
+    
     protected void imageSubmit_Click(object sender, ImageClickEventArgs e)
     {
-        
         //Inserindo Solicitacao Demandante
         MasterClasse _class = new MasterClasse();
         _class.InserirSolicitante(TextBoxName.Text, TextBox1NumberCpf.Text, TextBoxEmail.Text.Trim(), TextBoxTelefone.Text, TextBoxDescricao.Text, TextBoxCidade.Text, TextBoxNacionalidade.Text, DropDownListEstadoCivilSolicitante.SelectedValue, TextBoxProfissao.Text, TextBoxCep.Text, TextBoxEndereco.Text,
             TextBoxUFSolicitante.Text, DateTime.Parse(TextBoxDataNascSolicitante.Text, new CultureInfo("pt-br")), TextBoxCTPSSolicitante.Text, TextBoxRgSolicitante.Text, TextBoxOrgaoExpedidorSolicitante.Text,
             TextBoxRgUfSolicitante.Text, TextBoxBairroSolicitante.Text);
-        Session["EmailRetorno"] = TextBoxEmail.Text;
+            Session["EmailRetorno"] = TextBoxEmail.Text;
 
-        //Retorna o ID do demandante para adicionar na solicitação.
+        //Retorna o ID do Solicitante para adicionar na solicitação.
         EquilibrioClasse _pegarID = new EquilibrioClasse();
-        int retornoID = _pegarID.Id_Solicitante(TextBoxEmail.Text);
+        int retornoID = _pegarID.Id_Solicitante(TextBox1NumberCpf.Text);
         string salvarTexto = _pegarID.retornaTexto(TextBoxDescricao.Text);
 
         //Inserindo Solicitado
@@ -53,13 +40,17 @@ public partial class _Default : System.Web.UI.Page
         _classeSolicitado.InserirSolicitado(TextBoxNomeSolicitado.Text, TextBoxCpfSolicitado.Text, TextBoxEmailSolicitado.Text, TextBoxTelSolicitado.Text, TextBoxCidadeSolicitado.Text ,TextBoxNacionalidadeSolicitado.Text, 
         DropDownListEstadoCivilSolicitado.SelectedValue, TextBoxProfissaoSolicitado.Text, TextBoxCepSolicitado.Text, TextBoxEnderecoSolicitado.Text,
         TextBoxBairroSolicitado.Text, TextBoxUfSolicitado.Text);
-
-        //Inserindo solicitacao 
+               
+        //Inserindo solicitacao e informando o tipo do historico para consultar o status da solicitação
+        //1 = CRIADO
+        //2 = AGENDADO
+        //3 = REAGENDADO
+        //4 = EM ANDAMENTO
+        //5 = ENCERRADO
         MasterClasse _classSolicitado = new MasterClasse();
-        int retornaIdSolicitado = _classSolicitado.Id_Solicitado(TextBoxEmailSolicitado.Text);
-        int escolherMed = retornaChecarEscolherMed(Convert.ToInt32(CheckBoxSim.Checked), Convert.ToInt32(CheckBoxNao.Checked));        
-        _classSolicitado.InserirSolicitacao(escolherMed,DropDownListModalidade.SelectedValue, retornoID, retornaIdSolicitado); ;
-
+        int retornaIdSolicitado = _classSolicitado.Id_Solicitado(TextBoxCpfSolicitado.Text); //Busca o Id do solicitado para inserir na solicitação!
+        int idmediador = Convert.ToInt16(Session["IDMEDIADOR"]);
+        _classSolicitado.InserirSolicitacao(DropDownListModalidade.SelectedValue, TextBoxDescricao.Text, retornoID, TextBoxName.Text, retornaIdSolicitado, TextBoxNomeSolicitado.Text, 1, idmediador); 
         EquilibrioClasse _classe = new EquilibrioClasse();
         _classe.retornaEmail(TextBoxDescricao.Text);
 
@@ -93,6 +84,21 @@ public partial class _Default : System.Web.UI.Page
         TextBoxProfissao.Enabled = false;
         TextBoxCep.Enabled = false;
         TextBoxEndereco.Enabled = false;
+        TextBoxCidade.Enabled = false;
+        TextBoxUFSolicitante.Enabled = false;
+        TextBoxDataNascSolicitante.Enabled = false;
+        TextBoxRgSolicitante.Enabled = false;
+        TextBoxOrgaoExpedidorSolicitante.Enabled = false;
+        TextBoxRgUfSolicitante.Enabled = false;
+        TextBoxCTPSSolicitante.Enabled = false;
+        TextBoxBairroSolicitante.Enabled = false;
+
+        PanelDemandado.Enabled = true;
+        BuscarMediador();
+        DropDownListEscolherMediador.Visible = true;
+        ObjectDSBuscarMediador.DataBind();
+        DropDownListEscolherMediador.DataBind();
+
 
     }
 
@@ -102,12 +108,20 @@ public partial class _Default : System.Web.UI.Page
         TextBox1NumberCpf.Enabled = true;
         TextBoxEmail.Enabled = true;
         TextBoxTelefone.Enabled = true;
-        TextBoxDescricao.Enabled = true; TextBoxNacionalidade.Enabled = false;
+        TextBoxDescricao.Enabled = true;
+        TextBoxNacionalidade.Enabled = true;
         DropDownListEstadoCivilSolicitante.Enabled = true;
         TextBoxProfissao.Enabled = true;
         TextBoxCep.Enabled = true;
         TextBoxEndereco.Enabled = true;
-
+        TextBoxCidade.Enabled = true;
+        TextBoxUFSolicitante.Enabled = true;
+        TextBoxDataNascSolicitante.Enabled = true;
+        TextBoxRgSolicitante.Enabled = true;
+        TextBoxOrgaoExpedidorSolicitante.Enabled = true;
+        TextBoxRgUfSolicitante.Enabled = true;
+        TextBoxCTPSSolicitante.Enabled = true;
+        TextBoxBairroSolicitante.Enabled = true;
     }
 
     protected void GridViewPegarID_SelectedIndexChanged(object sender, ObjectDataSourceSelectingEventArgs e)
@@ -116,8 +130,48 @@ public partial class _Default : System.Web.UI.Page
        // Session["PegarID_demandante"] = GridViewPegarID.SelectedDataKey["ID_DEMANDANTE"].ToString(); 
     }
 
-    protected void GridViewPegarID_SelectedIndexChanged(object sender, EventArgs e)
+    protected void DropDownListEscolherMediador_SelectedIndexChanged(object sender, EventArgs e)
     {
-
+        CheckBoxMediadorOK.Checked = true;
+        Session["IDMEDIADOR"] = DropDownListEscolherMediador.SelectedValue;
     }
+
+    
+    public void BuscarMediador()
+    {
+        DataTable _retorno = new DataTable();
+        MySqlConnection sconexao = new MySqlConnection(ConfigurationManager.ConnectionStrings["Mediacao"].ConnectionString);
+        string s_Comando = "SELECT ID_MEDIADOR, NOME FROM TB_MEDIADOR WHERE FLG_ATIVO = 1 ORDER BY NOME;";
+        sconexao.Open();
+
+        MySqlCommand _comand = new MySqlCommand(s_Comando);
+        _comand.Connection = sconexao; // passando conexão aberta.
+        MySqlDataReader _reader = _comand.ExecuteReader();
+        _retorno.Load(_reader); //carrega a tabela com o leitor do comando mysql.
+        DataRow _row = _retorno.NewRow();
+        _retorno.Rows.InsertAt(_row, 0);
+
+        //Libera o dropdown para escolher o mediador pelo nome!
+        if (PanelDemandado.Enabled == true)
+        {
+            this.DropDownListEscolherMediador.DataSource = _retorno; //adiciona o DataTable com a instancia MySql
+            this.DropDownListEscolherMediador.DataTextField = "NOME";
+            this.DropDownListEscolherMediador.DataValueField = "ID_MEDIADOR";
+            this.DropDownListEscolherMediador.DataBind();
+        }
+
+        //Desabilitando Painel de solicitação, para pegar id do mediador no dropdown!
+        if (CheckBoxMediadorOK.Checked == true)
+        {
+            PanelDemandado.Enabled = false;
+        }
+        else { PanelDemandado.Enabled = true; }
+
+        //Fecha conexão e desfaz dos objetos!
+        sconexao.Close();
+        sconexao.Dispose();
+        _retorno.Dispose();
+        _reader.Dispose();
+    }
+
 }

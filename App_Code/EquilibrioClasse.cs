@@ -7,6 +7,8 @@ using MySql.Data.MySqlClient;
 using System.Text;
 using System.Data;
 using System.EnterpriseServices;
+using br.com.correios.apps;
+using System.Data.SqlClient;
 
 /// <summary>
 /// Summary description for EquilibrioClasse
@@ -308,7 +310,7 @@ public class EquilibrioClasse
             MySqlConnection _conn = new MySqlConnection(ConfigurationManager.ConnectionStrings["Mediacao"].ToString());
             _conn.Open();
 
-            string s_comando = "SELECT ID_SOLICITADO FROM TB_SOLICITADO WHERE =" + P_EMAIL.ToString() + ";";
+            string s_comando = "SELECT ID_SOLICITADO FROM TB_SOLICITADO WHERE EMAIL_SOLICITADO =" + P_EMAIL.ToString() + ";";
 
             MySqlCommand _comando = new MySqlCommand(s_comando, _conn);
             _comando.CommandType = CommandType.Text;
@@ -323,12 +325,12 @@ public class EquilibrioClasse
     
     }
 
-    public int Id_Solicitante(string email) {
+    public int Id_Solicitante(string P_CPF) {
         MySqlConnection _conn = new MySqlConnection(ConfigurationManager.ConnectionStrings["Mediacao"].ToString());
         _conn.Open();
         
         try {
-            string _comando = "CALL PRC_RETORNA_SOLICITANTE('" + email + "');";
+            string _comando = "CALL PRC_RETORNA_SOLICITANTE('" + P_CPF.ToString() + "');";
             
             MySqlCommand _comandoSql = new MySqlCommand();
             _comandoSql.Connection = _conn;
@@ -371,6 +373,7 @@ public class EquilibrioClasse
             }       
     }
 
+   
     public DataTable ObterMediador()
     {
         DataTable _dtRetorno = new DataTable();
@@ -424,6 +427,30 @@ public class EquilibrioClasse
         }
     }
 
+    public DataTable ObterUsuario(string email)
+    {
+        DataTable _table = new DataTable();
+        string _conn = ConfigurationManager.ConnectionStrings["Mediacao"].ToString();
+
+        string s_comndo = "SELECT NOME FROM TB_MEDIADOR WHERE EMAIL = '" + email + "';";
+
+        MySqlDataAdapter _adpter = new MySqlDataAdapter(s_comndo, _conn);
+        try
+        {
+            _adpter.Fill(_table);
+            return _table;
+
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+        finally
+        {
+            _adpter.Dispose();
+        }
+
+    } 
     public DataTable ObterMediador(string funcao)
     {
         DataTable _dtRetorno = new DataTable();
@@ -577,7 +604,6 @@ public class EquilibrioClasse
         }
         catch (Exception ex)
         {
-
             throw ex;
         }
         finally
@@ -721,7 +747,7 @@ public class EquilibrioClasse
         }
     }
 
-    public void InserirAgendamentoAdm(int id_solicitacao,int id_motivo,DateTime data_inicio,byte flg_avanco,string texto,int id_mediador,DateTime data_historico,byte tipo_historico,string hora_inicio,string hora_fim,string email_convidado,string link_video)
+    public void InserirAgendamentoAdm(int id_solicitacao,int id_motivo,DateTime data_inicio,byte flg_avanco,string texto,int id_mediador,DateTime data_historico,byte tipo_historico,string hora_inicio,string hora_fim, string email_convidado,string link_video)
     {
         try
         {
@@ -978,12 +1004,38 @@ public class EquilibrioClasse
         }
     }
 
-    public DataTable ObterConflitos()
+    public DataTable ObterPesquisaSolicitacao(string p_solicitado)
     {
         DataTable _dtRetorno = new DataTable();
         string sconexao = ConfigurationManager.ConnectionStrings["Mediacao"].ConnectionString;
 
-        string s_Comando = " CALL PRC_LISTA_CONFLITOS_NOVOS;";
+        string s_Comando = " CALL PRC_LISTA_CONFLITOS_PESQUISA(" + p_solicitado.ToString() + ");";
+
+
+        MySqlDataAdapter _adapter = new MySqlDataAdapter(s_Comando, sconexao);
+        try
+        {
+            _adapter.Fill(_dtRetorno);
+            return _dtRetorno;
+        }
+        catch (Exception ex)
+        {
+
+            throw ex;
+        }
+        finally
+        {
+            _adapter.Dispose();
+        }
+    }
+
+
+    public DataTable ObterConflitos(string nome_solicitado) //Verificar uso do método.
+    {
+        DataTable _dtRetorno = new DataTable();
+        string sconexao = ConfigurationManager.ConnectionStrings["Mediacao"].ConnectionString;
+
+        string s_Comando = " CALL PRC_LISTA_CONFLITOS_PESQUISA(" + nome_solicitado.ToString() + ");";
 
 
         MySqlDataAdapter _adapter = new MySqlDataAdapter(s_Comando, sconexao);
@@ -1005,7 +1057,7 @@ public class EquilibrioClasse
 
 
     //Adicionar parametros
-    public DataTable ObterSolicitacao(int id_cliente)
+    public DataTable ObterSolicitacao()
     {
         DataTable _dtRetorno = new DataTable();
         string sconexao = ConfigurationManager.ConnectionStrings["Mediacao"].ConnectionString;
@@ -1028,12 +1080,36 @@ public class EquilibrioClasse
         }
     }
 
-    public DataTable ObterConflitos(string demandado,int id_cliente)
+
+    public DataTable ObterSolicitacao_Cliente()
     {
         DataTable _dtRetorno = new DataTable();
         string sconexao = ConfigurationManager.ConnectionStrings["Mediacao"].ConnectionString;
 
-        string s_Comando = " CALL PRC_LISTA_CONFLITO_UNICO("+id_cliente.ToString() + ",'" + demandado.ToString().Trim()  + "');";
+        string s_Comando = " CALL PRC_LISTA_SOLICITACAO_CLIENTE();";
+        MySqlDataAdapter _adapter = new MySqlDataAdapter(s_Comando, sconexao);
+
+        try
+        {
+            _adapter.Fill(_dtRetorno);
+            return _dtRetorno;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+        finally
+        {
+            _adapter.Dispose();
+        }
+    }
+
+    public DataTable ObterConflitos(string id_solicitado,int id_solicitante)
+    {
+        DataTable _dtRetorno = new DataTable();
+        string sconexao = ConfigurationManager.ConnectionStrings["Mediacao"].ConnectionString;
+
+        string s_Comando = " CALL PRC_LISTA_CONFLITO_UNICO("+id_solicitante.ToString() + ",'" + id_solicitado.ToString().Trim()  + "');";
 
         MySqlDataAdapter _adapter = new MySqlDataAdapter(s_Comando, sconexao);
         try
@@ -1116,6 +1192,51 @@ public class EquilibrioClasse
         }
     }
 
+    public DataTable CarregarMediador(string email)
+    {
+        DataTable _table = new DataTable();
+        string _conn = ConfigurationManager.ConnectionStrings["Mediacao"].ToString();
+
+        string _comando = "SELECT NOME FROM TB_MEDIADOR WHERE EMAIL_MED = '" + email.ToString() + "';";
+
+        MySqlDataAdapter _adapter = new MySqlDataAdapter(_comando, _conn);
+        try
+        {
+            _adapter.Fill(_table);
+            return _table;
+        }
+        catch (Exception ex)
+        {
+
+            throw ex;
+        }
+    }
+
+    public DataTable ObterAgendaMediador(string email, string tipo_historico)
+    {
+        DataTable _table = new DataTable();
+        string _conn = ConfigurationManager.ConnectionStrings["Mediacao"].ToString();
+        //Comando select para trazer a agenda do mediador usando seu email como referência.
+        string _comando = "SELECT SOLICITACAO.ID_SOLICITACAO, SOLICITACAO.DATA_SOLICITACAO, SOLICITACAO.MODALIDADE, SOLICITACAO.SERVICO, SOLICITACAO.ULTIMO_HISTORICO, SUBSTRING(SOLICITACAO.DESCRICAO_SOLICITACAO, 1,30) AS DESCRICAO,";
+        _comando += "(CASE SOLICITACAO.TIPO_HISTORICO WHEN 1 THEN 'CRIADO' WHEN 2 THEN 'AGENDADO' WHEN 3 THEN 'REAGENDADO' WHEN 4 THEN 'EM ANDAMENTO' WHEN 5 THEN 'ENCERRADO' END) AS TIPO_HISTORICO  , MEDIADOR.ID_MEDIADOR, MEDIADOR.NOME, MEDIADOR.RG, MEDIADOR.CPF, MEDIADOR.CIDADE , MEDIADOR.ENDERECO ,MEDIADOR.EMAIL_MED, SOLICITADO.NOME_SOLICITADO, SOLICITADO.CPFCNPJ  , SOLICITADO.EMAIL_SOLICITADO, SOLICITADO.ENDERECO  , SOLICITADO.`BAIRRO_SOLICITADO`, SOLICITADO.CIDADE_SOLICITADO, SOLICITADO.TELEFONE";
+        _comando += "FROM TB_SOLICITACAO SOLICITACAO INNER JOIN TB_SOLICITANTE SOLICITANTE ON SOLICITANTE.ID_SOLICITANTE = `SOLICITACAO`.IDSOLICITANTE JOIN TB_SOLICITADO  SOLICITADO ON SOLICITADO.ID_SOLICITADO = `SOLICITACAO`.IDSOLICITADO JOIN TB_MEDIADOR  MEDIADOR ON MEDIADOR.ID_MEDIADOR = SOLICITACAO.IDMEDIADOR WHERE MEDIADOR.EMAIL_MED = " + email.ToString() + "AND SOLICITACAO.TIPO_HISTORICO IN (" + tipo_historico.ToString() + ");";
+       
+        MySqlDataAdapter _adapter = new MySqlDataAdapter(_comando, _conn);
+        try
+        {
+            _adapter.Fill(_table);
+            return _table;
+        }
+        catch (Exception ex)
+        {
+
+            throw ex;
+        }
+        finally
+        {
+            _adapter.Dispose();
+        }
+    }
     public DataTable ObterAgendaDiaria(int id_mediador,string tipo_historico)
     {
         

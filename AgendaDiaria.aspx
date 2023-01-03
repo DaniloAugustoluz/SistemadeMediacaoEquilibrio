@@ -75,9 +75,9 @@
                             <td>
                                 <asp:ObjectDataSource ID="ObjectDSAgenda" runat="server" 
                                     onselecting="ObjectDSAgenda_Selecting" 
-                                    TypeName="EquilibrioClasse" SelectMethod="ObterAgendaDiaria">
+                                    TypeName="EquilibrioClasse" SelectMethod="ObterAgendaMediador">
                                     <SelectParameters>
-                                        <asp:Parameter DefaultValue="" Name="id_mediador" Type="Int32" />
+                                        <asp:Parameter Name="email" Type="String" />
                                         <asp:Parameter DefaultValue="0" Name="tipo_historico" Type="String" />
                                     </SelectParameters>
                                 </asp:ObjectDataSource>
@@ -101,36 +101,22 @@
                                     BorderColor="#E7E7FF" BorderStyle="None" BorderWidth="1px" CellPadding="3" 
                                     GridLines="Horizontal" Width="100%" AllowPaging="True" AllowSorting="True" 
                                     AutoGenerateColumns="False" DataSourceID="ObjectDSAgenda" PageSize="5" 
-                                    DataKeyNames="DATA_INICIO,INICIO_TEXTO,FLG_AVANCO,LINK_VIDEO,DESCRICAO,CONTEUDO,DEMANDANTE,DEMANDADO,VALOR_CAUSA,ID_HISTORICO,NOME,ID_MEDIADOR,TIPO_HISTORICO,DATA_HISTORICO,DATA_ENCERRAMENTO,ID_CONFLITO,HORA_INICIO,HORA_FIM,DESC_TIPO_HISTORICO" 
                                     onselectedindexchanged="GridViewAgenda1_SelectedIndexChanged1">
                                     <AlternatingRowStyle BackColor="#F7F7F7" />
                                     <Columns>
-                                        <asp:CommandField ShowSelectButton="True" />
-                                        <asp:BoundField DataFormatString="ID_HISTORICO" HeaderText="Proced." 
-                                            SortExpression="ID_HISTORICO" />
-                                        <asp:BoundField DataField="DATA_INICIO" DataFormatString="{0:d}" 
-                                            HeaderText="Inicio" SortExpression="DATA_INICIO" />
-                                        <asp:BoundField DataField="INICIO_TEXTO" HeaderText="Resumo" 
-                                            SortExpression="INICIO_TEXTO" />
-                                        <asp:BoundField DataField="DESCRICAO" HeaderText="Doc." 
-                                            SortExpression="DESCRICAO" />
-                                        <asp:BoundField DataField="DEMANDANTE" HeaderText="Demandante" 
-                                            SortExpression="DEMANDANTE" />
-                                        <asp:BoundField DataField="DEMANDADO" HeaderText="Demandado" 
-                                            SortExpression="DEMANDADO" />
-                                        <asp:BoundField DataField="CONTEUDO" HeaderText="CONTEUDO" Visible="False" />
-                                        <asp:BoundField DataField="TIPO_HISTORICO" HeaderText="TIPO_HISTORICO" 
-                                            Visible="False" />
-                                        <asp:BoundField DataField="DATA_HISTORICO" DataFormatString="{0:d}" 
-                                            HeaderText="Data Historico" SortExpression="DATA_HISTORICO" />
-                                        <asp:BoundField DataField="VALOR_CAUSA" DataFormatString="{0:c}" 
-                                            HeaderText="Valor Causa" SortExpression="VALOR_CAUSA" />
-                                        <asp:BoundField DataField="HORA_INICIO" HeaderText="HORA_INICIO" />
-                                        <asp:BoundField DataField="DESC_TIPO_HISTORICO" HeaderText="Desc Historico" 
-                                            SortExpression="DATA_HISTORICO" />
+                                        <asp:BoundField DataField="ID_SOLICITACAO" HeaderText="ID_SOLICITACAO" />
+                                        <asp:BoundField DataField="DATA_SOLICITACAO" HeaderText="DATA_SOLICITACAO" SortExpression="DATA_SOLICITACAO" />
+                                        <asp:BoundField DataField="MODALIDADE" HeaderText="MODALIDADE" SortExpression="MODALIDADE" />
+                                        <asp:BoundField DataField="TIPO_HISTORICO" HeaderText="TIPO_HISTORICO" SortExpression="TIPO_HISTORICO" />
+                                        <asp:BoundField DataField="DESCRICAO_SOLICITACAO" HeaderText="DESCRICAO_SOLICITACAO" />
+                                        <asp:BoundField DataField="SERVICO" HeaderText="SERVICO" SortExpression="SERVICO" />
+                                        <asp:BoundField DataField="MEDIADOR" HeaderText="MEDIADOR" SortExpression="MEDIADOR" />
+                                        <asp:BoundField DataField="SOLICITANTE" HeaderText="SOLICITANTE" SortExpression="SOLICITANTE" />
+                                        <asp:BoundField DataField="SOLICITADO" HeaderText="SOLICITADO" SortExpression="SOLICITADO" />
+                                        <asp:BoundField />
                                     </Columns>
                                     <FooterStyle BackColor="#B5C7DE" ForeColor="#4A3C8C" />
-                                    <HeaderStyle BackColor="#4A3C8C" Font-Bold="True" ForeColor="#F7F7F7" />
+                                    <HeaderStyle BackColor="#4A3C8C" Font-Bold="True" ForeColor="#F7F7F7" HorizontalAlign="Center" VerticalAlign="Middle" />
                                     <PagerStyle BackColor="#E7E7FF" ForeColor="#4A3C8C" HorizontalAlign="Right" />
                                     <RowStyle BackColor="#E7E7FF" ForeColor="#4A3C8C" />
                                     <SelectedRowStyle BackColor="#738A9C" Font-Bold="True" ForeColor="#F7F7F7" />
