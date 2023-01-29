@@ -173,6 +173,11 @@
                             Name="funcao" PropertyName="SelectedValue" Type="String" />
                     </SelectParameters>
                 </asp:ObjectDataSource>
+                <asp:ObjectDataSource ID="ObjectDsPesquisarSolicitado" runat="server" SelectMethod="ObterPesquisaSolicitacao" TypeName="EquilibrioClasse">
+                    <SelectParameters>
+                        <asp:Parameter DefaultValue="&quot;&quot;" Name="SOLICITADO" Type="String" />
+                    </SelectParameters>
+                </asp:ObjectDataSource>
             </td>
             <td>
                 <asp:ObjectDataSource ID="ObjDSClient" runat="server" 
@@ -255,7 +260,7 @@
         </table>        
         </ContentTemplate>
         </asp:UpdatePanel>
-               <asp:Panel ID="PanelDocumento" runat="server" Visible ="false">
+               <asp:Panel ID="PanelDocumento" runat="server" Visible ="False">
        <table style="width: 100%;">
             <tr>
                 <td>
@@ -277,7 +282,7 @@
             <tr>
                 <td colspan="3">
                      <FTB:FreeTextBox ID="FreeTextBoxConvocacao" runat="server" Width="100%" 
-                         ReadOnly="True"  >
+                         ReadOnly="True" Language="pt-BR" ToolbarStyleConfiguration="NotSet"  >
                     </FTB:FreeTextBox>
                 </td>
             </tr>
@@ -288,7 +293,7 @@
                         ImageUrl="~/Novo_Layout/ok.png" onclick="ImageButtonConfirma_Click" />
                 </td>
                 <td style="text-align: center">
-                    <asp:ImageButton ID="ImageButtonEnviaEmail" runat="server" Height="68px" 
+                    <asp:ImageButton ID="ImageButtonEnviaEmail" runat="server" Height="63px" 
                         ImageUrl="~/Novo_Layout/envio_email.png" onclick="ImageButtonEnviaEmail_Click" 
                         Width="63px" />
                     &nbsp;

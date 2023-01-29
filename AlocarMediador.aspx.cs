@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Net.Mail;
 using System.Net.Mime;
+using System.Web.DynamicData;
 
 public partial class AlocarMediador : System.Web.UI.Page
 {
@@ -28,6 +29,13 @@ public partial class AlocarMediador : System.Web.UI.Page
     {
         try
         {
+            //Buscar ID do Documento
+            DropDownListDocumento.DataValueField = "ID_DOCUMENTOS";
+            DropDownListDocumento.DataBind();
+            int idDocumentos =  Convert.ToInt32(DropDownListDocumento.SelectedValue);
+            
+
+
             if (TextBoxAgenda.Text.Trim().Length == 0)
             {
                 Response.Write("<script type=text/javascript>alert('Por favor, informe a data do evento ') </script>");
@@ -43,9 +51,9 @@ public partial class AlocarMediador : System.Web.UI.Page
             else
             {
                 EquilibrioClasse _agenda = new EquilibrioClasse();
-                _agenda.InserirAgendamentoAdm(Convert.ToInt16(GridViewContratos.SelectedDataKey["ID_SOLICITACAO"])
-                                            , 0, Convert.ToDateTime(TextBoxAgenda.Text), 1,FreeTextBoxConvocacao .Text
-                                            , Convert.ToInt32(DropDownListColaborador.SelectedValue), DateTime.Now, 0
+                _agenda.InserirAgendamentoAdm(idDocumentos,Convert.ToInt16(GridViewContratos.SelectedDataKey["SOLICITACAO"])
+                                            , 1, Convert.ToDateTime(TextBoxAgenda.Text), 1,FreeTextBoxConvocacao .Text
+                                            , Convert.ToInt32(DropDownListColaborador.SelectedValue), DateTime.Now, 2
                                             , TextBoxHoraInicio.Text, TextBoxHoraFim.Text, TextBoxEmailConvidado.Text,TextBoxlinkvideo.Text);
 
                 GridViewContratos.DataBind();
@@ -177,7 +185,7 @@ public partial class AlocarMediador : System.Web.UI.Page
             }
             else
             {
-                GridViewContratos.Enabled = false ;
+                GridViewContratos.Enabled = false;
             }
             TextBoxAgenda.Enabled = true;
             TextBoxHoraFim.Enabled = true;
@@ -234,12 +242,15 @@ public partial class AlocarMediador : System.Web.UI.Page
     {
         if (TextBoxDemandado.Text.Trim().Length > 0)
         {
-            ObjectDataSourceHIST.SelectMethod = "ObterPesquisaSolicitacao";
-            ObjectDataSourceHIST.SelectParameters.Clear();
-            ObjectDataSourceHIST.SelectParameters.Add("p_solicitado", System.Data.DbType.String, TextBoxDemandado.Text.Trim());
-            //ObjectDataSourceHIST.SelectParameters.Add("id_cliente", System.Data.DbType.Int16, DropDownListCliente.SelectedValue.ToString());
-            ObjectDataSourceHIST.DataBind();
+            EquilibrioClasse _classe = new EquilibrioClasse();
+
+            ObjectDsPesquisarSolicitado.SelectMethod = "ObterPesquisaSolicitacao";
+            ObjectDsPesquisarSolicitado.SelectParameters.Clear();
+            ObjectDsPesquisarSolicitado.SelectParameters.Add("SOLICITADO", System.Data.DbType.String, TextBoxDemandado.Text);
+            GridViewContratos.DataSourceID = "ObjectDsPesquisarSolicitado";
+            ObjectDsPesquisarSolicitado.DataBind();
             GridViewContratos.DataBind();
+
         }
     }
 

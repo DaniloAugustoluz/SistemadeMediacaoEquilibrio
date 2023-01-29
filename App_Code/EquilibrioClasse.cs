@@ -9,6 +9,9 @@ using System.Data;
 using System.EnterpriseServices;
 using br.com.correios.apps;
 using System.Data.SqlClient;
+using Org.BouncyCastle.Asn1.X509;
+using System.Activities.Expressions;
+using System.Activities.Statements;
 
 /// <summary>
 /// Summary description for EquilibrioClasse
@@ -379,7 +382,7 @@ public class EquilibrioClasse
         DataTable _dtRetorno = new DataTable();
         string sconexao = ConfigurationManager.ConnectionStrings["Mediacao"].ConnectionString;
 
-        string s_Comando = "SELECT ID_MEDIADOR, NOME, ENDERECO, CEP, BAIRRO, CIDADE, UF, DATA_CADASTRO, EMAIL_MED, FUNCAO, CASE FLG_ATIVO WHEN 1 THEN 'True' ELSE 'False' END AS FLG_ATIVO  FROM TB_MEDIADOR ORDER BY NOME";
+        string s_Comando = "SELECT ID_MEDIADOR, NOME, ENDERECO, CEP, BAIRRO, CIDADE, UF, DATA_CADASTRO, EMAIL_MED, FUNCAO, CASE FLG_ATIVO WHEN 1 THEN 'True' ELSE 'False' END AS FLG_ATIVO  FROM TB_MEDIADOR  WHERE FLG_ATIVO = 1 ORDER BY NOME;";
 
 
         MySqlDataAdapter _adapter = new MySqlDataAdapter(s_Comando, sconexao);
@@ -747,7 +750,7 @@ public class EquilibrioClasse
         }
     }
 
-    public void InserirAgendamentoAdm(int id_solicitacao,int id_motivo,DateTime data_inicio,byte flg_avanco,string texto,int id_mediador,DateTime data_historico,byte tipo_historico,string hora_inicio,string hora_fim, string email_convidado,string link_video)
+    public void InserirAgendamentoAdm(int p_id_documento,int p_id_hitorico_solicitacao,int id_motivo,DateTime data_inicio,byte flg_avanco,string texto,int id_mediador,DateTime data_historico,byte tipo_historico,string hora_inicio,string hora_fim, string email_convidado,string link_video)
     {
         try
         {
@@ -757,8 +760,9 @@ public class EquilibrioClasse
 
             _comm.Connection = _conn;
             _comm.CommandType = CommandType.StoredProcedure;
-            _comm.Parameters.Add("P_ID_SOLICITACAO", MySqlDbType.Int32).Value = id_solicitacao.ToString();
-            _comm.Parameters.Add("P_ID_MOTIVO", MySqlDbType.Byte).Value = id_motivo.ToString();
+            _comm.Parameters.Add("P_ID_DOCUMENTOS", MySqlDbType.Int32).Value = p_id_documento.ToString();
+            _comm.Parameters.Add("P_ID_HISTORICO_SOLICITACAO", MySqlDbType.Int32).Value = p_id_hitorico_solicitacao.ToString();
+            _comm.Parameters.Add("P_ID_MOTIVO", MySqlDbType.Int32).Value = id_motivo.ToString();
             _comm.Parameters.Add("P_DATA_INICIO", MySqlDbType.Datetime).Value = data_inicio;
             _comm.Parameters.Add("P_FLG_AVANCO", MySqlDbType.Byte).Value = flg_avanco;
             _comm.Parameters.Add("P_TEXTO", MySqlDbType.Text).Value = texto;
@@ -781,7 +785,7 @@ public class EquilibrioClasse
         }
     }
 
-    public void InserirAgendamento(int id_conflito, int id_motivo, DateTime data_inicio, byte flg_avanco, string texto, int id_mediador, DateTime data_historico, byte tipo_historico, string hora_inicio, string hora_fim)
+    public void InserirAgendamento(int p_id_documento, int p_id_hitorico_solicitacao, int id_motivo, DateTime data_inicio, byte flg_avanco, string texto, int id_mediador, DateTime data_historico, byte tipo_historico, string hora_inicio, string hora_fim, String comentario)
     {
         try
         {
@@ -791,8 +795,8 @@ public class EquilibrioClasse
 
             _comm.Connection = _conn;
             _comm.CommandType = CommandType.StoredProcedure;
-
-            _comm.Parameters.Add("P_ID_CONFLITO", MySqlDbType.Int32).Value = id_conflito.ToString();
+            _comm.Parameters.Add("P_ID_DOCUMENTOS", MySqlDbType.Int32).Value = p_id_documento.ToString();
+            _comm.Parameters.Add("P_ID_HISTORICO_SOLICITACAO", MySqlDbType.Int32).Value = p_id_hitorico_solicitacao.ToString();
             _comm.Parameters.Add("P_ID_MOTIVO", MySqlDbType.Byte).Value = id_motivo.ToString();
             _comm.Parameters.Add("P_DATA_INICIO", MySqlDbType.Datetime).Value = data_inicio;
             _comm.Parameters.Add("P_FLG_AVANCO", MySqlDbType.Byte).Value = flg_avanco;
@@ -800,8 +804,9 @@ public class EquilibrioClasse
             _comm.Parameters.Add("P_ID_MEDIADOR", MySqlDbType.Int16).Value = id_mediador.ToString();
             _comm.Parameters.Add("P_DATA_HISTORICO", MySqlDbType.Datetime).Value = data_historico;
             _comm.Parameters.Add("P_TIPO_HISTORICO", MySqlDbType.Byte).Value = tipo_historico;
-            _comm.Parameters.Add("P_HORA_INICIO", MySqlDbType.VarChar, 10).Value = hora_inicio;
-            _comm.Parameters.Add("P_HORA_FIM", MySqlDbType.VarChar, 10).Value = hora_fim;
+            _comm.Parameters.Add("P_HORA_INICIO", MySqlDbType.VarChar,10).Value = hora_inicio;
+            _comm.Parameters.Add("P_HORA_FIM", MySqlDbType.VarChar,10).Value = hora_fim;
+            _comm.Parameters.Add("P_COMENTARIO", MySqlDbType.Text).Value = comentario;
 
             _comm.CommandText = "PRC_AGENDA_SERVICO";
             _comm.ExecuteNonQuery();
@@ -948,17 +953,17 @@ public class EquilibrioClasse
     }
 
     public DataTable ObterPreCad(string email) {
-        DataTable _retornoTabela = new DataTable();
         
+        DataTable _retornoTabela = new DataTable();
         MySqlConnection _conn = new MySqlConnection(ConfigurationManager.ConnectionStrings["Mediacao"].ToString());
-        string s_Comando = "SELECT NOME, EMAIL,  DESCRICAO AS  'ORIGEM DO CLIENTE'  FROM TB_USUARIO;";
+        string s_Comando = "SELECT NOME, EMAIL,  DESCRICAO AS  'ORIGEM DO CLIENTE' FROM TB_USUARIO;";
 
         MySqlDataAdapter _adapter = new MySqlDataAdapter(s_Comando, _conn);
+        
         try
         {
             _adapter.Fill(_retornoTabela);
             return _retornoTabela;
-
         }
         
         catch (Exception ex)
@@ -1004,13 +1009,14 @@ public class EquilibrioClasse
         }
     }
 
-    public DataTable ObterPesquisaSolicitacao(string p_solicitado)
+    public DataTable ObterPesquisaSolicitacao(string SOLICITADO)
     {
         DataTable _dtRetorno = new DataTable();
         string sconexao = ConfigurationManager.ConnectionStrings["Mediacao"].ConnectionString;
 
-        string s_Comando = " CALL PRC_LISTA_CONFLITOS_PESQUISA(" + p_solicitado.ToString() + ");";
-
+        string s_Comando = "SELECT SLCTAO.ID_SOLICITACAO AS SOLICITACAO, SLCTAO.`NOME_SOLICITANTE`, SLCTE.`EMAIL_SOLICITANTE`, SLCTE.DESCRICAO, SLCTE.CIDADE, SLCTAO.`NOME_SOLICITADO`, SLCTA.CPFCNPJ,";
+        s_Comando += "SLCTA.`EMAIL_SOLICITADO` FROM TB_SOLICITACAO SLCTAO INNER JOIN TB_SOLICITANTE SLCTE ON SLCTE.ID_SOLICITANTE = SLCTAO.IDSOLICITANTE  INNER JOIN TB_SOLICITADO SLCTA ON SLCTA.ID_SOLICITADO = SLCTAO.IDSOLICITADO";
+        s_Comando += " WHERE SLCTAO.ULTIMO_HISTORICO = 1 AND SLCTAO.NOME_SOLICITADO LIKE '" + SOLICITADO.ToString()+ "%' ORDER BY SLCTAO.ID_SOLICITACAO; ";
 
         MySqlDataAdapter _adapter = new MySqlDataAdapter(s_Comando, sconexao);
         try
@@ -1192,6 +1198,7 @@ public class EquilibrioClasse
         }
     }
 
+
     public DataTable CarregarMediador(string email)
     {
         DataTable _table = new DataTable();
@@ -1212,14 +1219,13 @@ public class EquilibrioClasse
         }
     }
 
-    public DataTable ObterAgendaMediador(string email, string tipo_historico)
+    public DataTable ObterAgendaMediador(int idmediador, string tipo_historico)
     {
         DataTable _table = new DataTable();
         string _conn = ConfigurationManager.ConnectionStrings["Mediacao"].ToString();
         //Comando select para trazer a agenda do mediador usando seu email como referência.
-        string _comando = "SELECT SOLICITACAO.ID_SOLICITACAO, SOLICITACAO.DATA_SOLICITACAO, SOLICITACAO.MODALIDADE, SOLICITACAO.SERVICO, SOLICITACAO.ULTIMO_HISTORICO, SUBSTRING(SOLICITACAO.DESCRICAO_SOLICITACAO, 1,30) AS DESCRICAO,";
-        _comando += "(CASE SOLICITACAO.TIPO_HISTORICO WHEN 1 THEN 'CRIADO' WHEN 2 THEN 'AGENDADO' WHEN 3 THEN 'REAGENDADO' WHEN 4 THEN 'EM ANDAMENTO' WHEN 5 THEN 'ENCERRADO' END) AS TIPO_HISTORICO  , MEDIADOR.ID_MEDIADOR, MEDIADOR.NOME, MEDIADOR.RG, MEDIADOR.CPF, MEDIADOR.CIDADE , MEDIADOR.ENDERECO ,MEDIADOR.EMAIL_MED, SOLICITADO.NOME_SOLICITADO, SOLICITADO.CPFCNPJ  , SOLICITADO.EMAIL_SOLICITADO, SOLICITADO.ENDERECO  , SOLICITADO.`BAIRRO_SOLICITADO`, SOLICITADO.CIDADE_SOLICITADO, SOLICITADO.TELEFONE";
-        _comando += "FROM TB_SOLICITACAO SOLICITACAO INNER JOIN TB_SOLICITANTE SOLICITANTE ON SOLICITANTE.ID_SOLICITANTE = `SOLICITACAO`.IDSOLICITANTE JOIN TB_SOLICITADO  SOLICITADO ON SOLICITADO.ID_SOLICITADO = `SOLICITACAO`.IDSOLICITADO JOIN TB_MEDIADOR  MEDIADOR ON MEDIADOR.ID_MEDIADOR = SOLICITACAO.IDMEDIADOR WHERE MEDIADOR.EMAIL_MED = " + email.ToString() + "AND SOLICITACAO.TIPO_HISTORICO IN (" + tipo_historico.ToString() + ");";
+        string _comando = "ID_HISTORICO, SELECT ID_DOCUMENTOS, ID_HISTORICO_SOLICITACAO, ID_MOTIVO, DATA_INICIO, FLG_AVANCO, TEXTO, IDMEDIADOR_HISTORICO, DATA_HISTORICO,";
+        _comando += "TIPO_HISTORICO, HORA_INICIO, HORA_FIM, EMAIL_CONVIDADO, LINK_VIDEO, COMENTARIO";
        
         MySqlDataAdapter _adapter = new MySqlDataAdapter(_comando, _conn);
         try
