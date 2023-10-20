@@ -8,91 +8,116 @@
         {
             color: #000099;
         }
-        .auto-style3 {
-            width: 187px;
-            height: 26px;
-        }
         .auto-style4 {
             width: 191px;
         }
         .auto-style5 {
-            width: 100%;
+            width: 142%;
         }
         .auto-style7 {
-            height: 63px;
-        }
-        .auto-style8 {
-            color: #000099;
-            height: 63px;
-        }
-        .auto-style9 {
-            height: 26px;
+            height: 7px;
+            width: 225px;
         }
         .auto-style10 {
             height: 34px;
         }
-        .auto-style11 {
-            color: #000099;
-            height: 34px;
+        .auto-style14 {
+            height: 7px;
+            width: 257px;
+        }
+        .auto-style15 {
+            height: 7px;
+            width: 298px;
+        }
+        .auto-style17 {
+            width: 17px;
+            height: 7px;
+        }
+        .auto-style18 {
+            height: 26px;
+            width: 497px;
+        }
+        .auto-style22 {
+            height: 26px;
+            width: 817px;
+        }
+        .auto-style23 {
+            height: 26px;
+            width: 508px;
+        }
+        .auto-style24 {
+            width: 191px;
+            height: 12px;
+        }
+        .auto-style25 {
+            height: 12px;
+        }
+        .auto-style26 {
+            height: 26px;
         }
     </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" Runat="Server">
     <table style="width:100%;">
         <tr>
+            <td class="auto-style17">&nbsp;</td>
             <td style="text-align: center" align="center" class="auto-style7">
-                                <asp:ImageButton ID="ImageButtonAgenda" runat="server" ImageUrl="~/Novo_Layout/teste icone agenda 80 px.png" OnClick="ImageButtonAgenda_Click" Width="80px" Height="80px" />
+                                <asp:ImageButton ID="ImageButtonAgenda" runat="server" ImageUrl="~/Novo_Layout/AGENDA NOVO TAMANHO.png" OnClick="ImageButtonAgenda_Click" Width="80px" Height="74px" />
                             </td>
-            <td style="text-align: center" align="center" class="auto-style7">
-                                <asp:ImageButton ID="ButtonAtendimento" runat="server" ImageUrl="~/Novo_Layout/ATENDIEMNTO 2.png" OnClick="ButtonAtendimento_Click1" Height="72px" Width="80px" />
+            <td style="text-align: center" align="center" class="auto-style15">
+                                <asp:ImageButton ID="ButtonAtendimento" runat="server" ImageUrl="~/Novo_Layout/TESTE ATENDIEMNTO 200PX.png" OnClick="ButtonAtendimento_Click1" Height="80px" Width="100px" />
             </td>
-            <td style="text-align: center" class="auto-style7" align="center">
-                                <asp:ImageButton ID="ButtonResultado" runat="server" Height="75px" ImageUrl="~/Novo_Layout/resultado 1.png" Width="75px" />
+            <td style="text-align: center" class="auto-style14" align="center">
+                                <asp:ImageButton ID="ButtonResultado" runat="server" Height="75px" ImageUrl="~/Novo_Layout/RESULTADO.png" Width="85px" />
                             </td>
-            <td style="text-align: center" class="auto-style7">
-                </td>
-            <td class="auto-style8">
-                </td>
-        </tr>
-        <tr>
-            <td style="text-align: center" colspan="3">
-                &nbsp;</td>
-            <td style="text-align: center">
-                &nbsp;</td>
-            <td class="style1">
-                &nbsp;</td>
         </tr>
         <tr>
             <td style="text-align: center" colspan="3" class="auto-style10">
                 <asp:Panel ID="PanelButtonsDropDownAgenda" runat="server">
                     <table class="auto-style5">
                         <tr>
-                            <td class="auto-style3">Mediador</td>
-                            <td align="left" class="auto-style9">
-                                <asp:DropDownList ID="DropDownListMediador" runat="server" AutoPostBack="True" Height="25px" onselectedindexchanged="DropDownListMediador_SelectedIndexChanged" Width="60%">
+                            <td class="auto-style23"></td>
+                            <td align="center" class="auto-style22">
+                                &nbsp;<asp:Label ID="LabelEscolherMediador" runat="server" Font-Italic="True" ForeColor="Black" Text="Escolha o Mediador"></asp:Label>
+                            </td>
+                            <td align="center" class="auto-style18"></td>
+                        </tr>
+                        <tr>
+                            <td class="auto-style23">&nbsp;</td>
+                            <td align="left" class="auto-style26" colspan="2">
+                                <asp:DropDownList ID="DropDownListMediador" runat="server" AutoPostBack="True" Height="25px" onselectedindexchanged="DropDownListMediador_SelectedIndexChanged" Width="80%">
                                     <asp:ListItem Value="0">&lt;&lt; Selecione &gt;&gt;</asp:ListItem>
                                 </asp:DropDownList>
                             </td>
                         </tr>
+                        <tr>
+                            <td class="auto-style23" align="left">
+                                <asp:ImageButton ID="ImageButtonSair" runat="server" ImageAlign="Middle" ImageUrl="~/Novo_Layout/menu 2.png" onclick="ImageButtonSair_Click" ToolTip="Voltar para o menu" Width="15%" />
+                                &nbsp;&nbsp;
+                                <asp:ImageButton ID="ImageButtonConfirma" runat="server" ImageAlign="Middle" ImageUrl="~/Novo_Layout/icon affirmative.png" onclick="ImageButtonConfirma_Click" ToolTip="OK" Visible="False" Width="15%" />
+                            </td>
+                            <td align="center" class="auto-style22">&nbsp;</td>
+                                          
+                            </td align="center" class="auto-style18">
+                            &nbsp;<caption>
+                                &nbsp;</td>
+                            </caption>
+                        </tr>
                     </table>
                 </asp:Panel>
             </td>
-            <td style="text-align: center" class="auto-style10">
-                </td>
-            <td class="auto-style11">
-                </td>
+
         </tr>
         <tr>
-            <td colspan="4" rowspan="2">
+            <td colspan="4" rowspan="3">
                 <asp:Panel ID="PanelAgenda" runat="server" Width="100%">
                     <table style="width:100%;">
                         <tr>
-                            <td style="text-align: center" class="auto-style4">
+                            <td style="text-align: center" class="auto-style24" align="right">
                                 &nbsp;</td>
-                            <td style="text-align: center">
-                                &nbsp;</td>
-                            <td style="text-align: center">
-                                &nbsp;</td>
+                            <td style="text-align: center" align="right" class="auto-style25">
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            </td>
                         </tr>
                         <tr>
                             <td class="auto-style4">
@@ -199,16 +224,15 @@
                 </asp:Panel>
             </td>
             <td style="text-align: center">
-                <asp:ImageButton ID="ImageButtonConfirma" runat="server" 
-                    ImageUrl="~/Novo_Layout/ok.png" onclick="ImageButtonConfirma_Click" 
-                    Visible="False" />
-            </td>
+                &nbsp;</td>
         </tr>
         <tr>
             <td style="text-align: center">
-                <asp:ImageButton ID="ImageButtonSair" runat="server" 
-                    ImageUrl="~/Novo_Layout/sair.png" onclick="ImageButtonSair_Click" />
-            </td>
+                &nbsp;</td>
+        </tr>
+        <tr>
+            <td style="text-align: center">
+                &nbsp;</td>
         </tr>
     </table>
 </asp:Content>

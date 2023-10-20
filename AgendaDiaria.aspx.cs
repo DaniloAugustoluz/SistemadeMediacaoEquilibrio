@@ -143,12 +143,19 @@ public partial class AgendaDiaria : System.Web.UI.Page
     protected void DropDownListDocAgenda_SelectedIndexChanged(object sender, EventArgs e)
     {
         ImageButtonConfirma.Visible = true;
+
+
         EquilibrioClasse _objConteudo = new EquilibrioClasse();
         try
         {
+            FreeTextBoxAgenda.Visible = true;
+            FreeTextBoxAgenda.ReadOnly = true;
+            FreeTextBoxAgenda.Text = GridViewAgenda1.SelectedDataKey["TEXTO"].ToString();
+            FreeTextBoxAtende.Visible = true;
             FreeTextBoxAtende.Text = _objConteudo.ObterConteudoDocumento(Convert.ToInt32(DropDownListDocAgenda.SelectedValue)).ToString();
             PanelAgenda.Visible = true;
             PanelAtendimento.Visible = true;
+            PanelButtonsDropDownAgenda.Visible = true;
 
         }
         catch (Exception ex)
@@ -168,6 +175,7 @@ public partial class AgendaDiaria : System.Web.UI.Page
         {
             //Habilitando e preenchendo freetextboxAgenda com o Texto do Gridview
             PanelAgenda.Visible = true;
+            PanelButtonsDropDownAgenda.Visible = true;
             //PanelAtendimento.Visible = true;
             FreeTextBoxAgenda.EnableToolbars = false;
             FreeTextBoxAgenda.Visible = true;
@@ -294,7 +302,7 @@ public partial class AgendaDiaria : System.Web.UI.Page
     {
         if(e.Row.RowType == DataControlRowType.DataRow)
         {
-            e.Row.Cells[6].Text = FormatarTexto(e.Row.Cells[6].Text, 60);
+            e.Row.Cells[6].Text = FormatarTexto(e.Row.Cells[6].Text, 20);
         }
     }
 }

@@ -59,14 +59,6 @@
                     </tr>
                     <tr>
                      <td class="style4" align="center" colspan="2">
-                        <asp:Image ID="Image1" runat="server" ImageAlign="Left" Width="538px"  
-                             Heght="400px" ImageUrl="~/Novo_Layout/Cabecalho_equilibrio.png" />
-                         <br />
-                            <asp:Label ID="LabelAcesso" runat="server" Font-Bold="True" 
-                             ForeColor="#4B6C9E"  Font-Size="Small" 
-                                
-                                Text="A MEDIAÇÃO É UMA FORMA HUMANIZADA DE RESOLVER CONFLITOS, ONDE AS PARTES TOMAM A DECISÃO CONFORME SEUS PRINCÍPIOS E CRENÇAS; MELHORANDO SUAS RELAÇÕES PESSOAIS E COM O MUNDO." 
-                                Font-Italic="True" Font-Names="Segoe UI Semibold"></asp:Label>
                         </td>
                         
                     </tr>

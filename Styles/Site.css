@@ -94,18 +94,19 @@ first child of the left and right table columns */
 
 .page
 {
-    width: 1024px;
+    width: 1150px;
+    height: 600px;
     background-color: #fff;
     margin: 20px auto 0px auto;
     border: 1px solid #496077;
 }
 
-.header
-{
+.header {
     position: relative;
     margin: 0px;
     padding: 0px;
-    background: #4b6c9e;
+    background: #fcfcfc;
+    border-bottom: 1px solid #dd2626;
     width: 100%;
 }
 
@@ -118,6 +119,11 @@ first child of the left and right table columns */
     border: none;
     line-height: 2em;
     font-size: 2em;
+}
+.header img{
+    display: flex;
+    position: relative;
+    left: 400px;
 }
 
 .main
